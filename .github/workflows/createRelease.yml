@@ -1,0 +1,26 @@
+name: Create release
+
+on: 
+  push:
+    tags:
+    - 'rel*'
+
+jobs:
+
+  createRelease:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    
+    - name: Create Windows binaries
+      run: cd GitHubViewer.Web && dotnet publish -c Release -r win-x64 /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true
+      
+    - name: Create release zip
+      run: cd GitHubViewer.Web/bin/Release/net5.0/win-x64/publish && zip -r GitHubViewer.zip ./GitHubViewer.exe ./wwwroot
+    
+    - name: Create release
+      uses: softprops/action-gh-release@v1
+      with:
+        files:  GitHubViewer.Web/bin/Release/net5.0/win-x64/publish/GitHubViewer.zip
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
