@@ -1,0 +1,56 @@
+@page
+@using Microsoft.AspNetCore.Http
+@using GitHubViewer.Lib
+@using Octokit
+
+@model RepositoriesPage
+@{
+    ViewData["Title"] = "Repositories";
+}
+
+<h1>@ViewData["Title"]</h1>
+<p>Repositories accessible to <em>@HttpContext.Session.GetString(LoginMiddleware.UserKey)</em>:</p>
+<div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Repository name</th>
+            <th>Commits</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (RepositoryAndCommits repository in Model.RepositoriesList)
+        {
+            <tr>
+                <td><a href="@repository.Repository.HtmlUrl">@repository.Repository.Name</a></td>
+                <td>
+                    <table class="table">
+                    @if (repository.Commits.Any())
+                    {
+
+                        @foreach (GitHubCommit commit in repository.Commits)
+                        {
+                            <tr>
+                                <td>
+                                    @commit.Commit.Message
+                                    <br>
+                                    @commit.Commit.Committer.Name, <a href="@commit.HtmlUrl">@commit.Sha.Substring(0, 7)</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td>
+                                (no commits)
+                            </td>
+                        </tr>
+                    }
+                    </table>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

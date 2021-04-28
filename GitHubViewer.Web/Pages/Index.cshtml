@@ -1,0 +1,27 @@
+@page
+@using Microsoft.AspNetCore.Http
+@model IndexPage
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<h3>GitHub Viewer</h3>
+
+@if (HttpContext.Session.GetString(LoginMiddleware.UserKey) != null)
+{
+    <p>
+        You are logged in as <em>@HttpContext.Session.GetString(LoginMiddleware.UserKey)</em>.
+    </p>
+    <p>
+        You can proceed to the <a asp-page="Repositories">Repositories</a> page.
+    </p>
+}
+else
+{
+    <p>
+        This application allows you to view your GitHub repositories and their most recent commits.
+    </p>
+    <p>
+        Please <a asp-page="Login">log in</a> to access your GitHub repositories.
+    </p>
+}
